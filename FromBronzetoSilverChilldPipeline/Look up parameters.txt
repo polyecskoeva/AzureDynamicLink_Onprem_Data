@@ -1,0 +1,37 @@
+Look up parameters
+
+{
+    "name": "Json1",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LStodataLake",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Json",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": "parameterstoSilver.json",
+                "fileSystem": "parameters"
+            }
+        },
+        "schema": {
+            "type": "object",
+            "properties": {
+                "br_directory": {
+                    "type": "string"
+                },
+                "br_file_name": {
+                    "type": "string"
+                },
+                "slvr_Directory": {
+                    "type": "string"
+                },
+                "slvr_FileName": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

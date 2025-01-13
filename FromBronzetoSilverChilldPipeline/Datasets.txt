@@ -1,0 +1,124 @@
+Datasets: 
+-----------------Dataset from Bronze---------------
+
+
+{
+    "name": "DSFrombronze",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LStodataLake",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "br_directory": {
+                "type": "String"
+            },
+            "br_file_name": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().br_file_name",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().br_directory",
+                    "type": "Expression"
+                },
+                "fileSystem": "bronze"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": [
+            {
+                "name": "CustomerID",
+                "type": "UTF8"
+            },
+            {
+                "name": "CompanyName",
+                "type": "UTF8"
+            },
+            {
+                "name": "ContactName",
+                "type": "UTF8"
+            },
+            {
+                "name": "ContactTitle",
+                "type": "UTF8"
+            },
+            {
+                "name": "Address",
+                "type": "UTF8"
+            },
+            {
+                "name": "City",
+                "type": "UTF8"
+            },
+            {
+                "name": "Region",
+                "type": "UTF8"
+            },
+            {
+                "name": "PostalCode",
+                "type": "UTF8"
+            },
+            {
+                "name": "Country",
+                "type": "UTF8"
+            },
+            {
+                "name": "Phone",
+                "type": "UTF8"
+            },
+            {
+                "name": "Fax",
+                "type": "UTF8"
+            }
+        ]
+    }
+}
+
+
+
+---------------- DatasetToSilver---------------
+{
+    "name": "DSToSilver",
+    "properties": {
+        "description": "fromBronzetoSilver",
+        "linkedServiceName": {
+            "referenceName": "LStodataLake",
+            "type": "LinkedServiceReference"
+        },
+        "parameters": {
+            "slvr_Directory": {
+                "type": "String"
+            },
+            "slvr_FileName": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@dataset().slvr_FileName",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@dataset().slvr_Directory",
+                    "type": "Expression"
+                },
+                "fileSystem": "silver"
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": []
+    }
+}

@@ -1,0 +1,45 @@
+[
+  {
+    "br_directory": "Territories",
+    "br_file_name": "Territories.parquet",
+    "slvr_Directory": "Territories",
+    "slvr_FileName": "Territories"
+  },
+  {
+    "br_directory": "EmployeeTerritories",
+    "br_file_name": "EmployeeTerritories.parquet",
+    "slvr_Directory": "EmployeeTerritories",
+    "slvr_FileName": "EmployeeTerritories"
+  },
+  {
+    "br_directory": "Customers",
+    "br_file_name": "Customers.parquet",
+    "slvr_Directory": "Customers",
+    "slvr_FileName": "Customers"
+  },
+  {
+    "br_directory": "Order_Details",
+    "br_file_name": "Order_Details.parquet",
+    "slvr_Directory": "Order_Details",
+    "slvr_FileName": "Order_Details"
+  },
+  {
+    "br_directory": "Region",
+    "br_file_name": "Region.parquet",
+    "slvr_Directory": "Region",
+    "slvr_FileName": "Region"
+  },
+  {
+    "br_directory": "Shippers",
+    "br_file_name": "Shippers.parquet",
+    "slvr_Directory": "Shippers",
+    "slvr_FileName": "Shippers"
+  },
+  {
+    "br_directory": "Suppliers",
+    "br_file_name": "Suppliers.parquet",
+    "slvr_Directory": "Suppliers",
+    "slvr_FileName": "Suppliers"
+  }
+]
+
