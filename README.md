@@ -39,7 +39,7 @@ The pipeline contains a Lookup Activity that executes the provided query to get 
 The next activity is a For Each, which iterates over the output values from the Lookup query.
 Inside the For Each, there is a Copy Activity that dynamically writes data to the Gen2 storage with a dynamic file path.
 
-[Find Activites, Dataset code sources here](IncrementalDataLoad)
+[Find Activites, Dataset code sources here.](IncrementalDataLoad)
 
 
 ### :checkered_flag: From Bronze container to Data Lake Bronze container to Silver
