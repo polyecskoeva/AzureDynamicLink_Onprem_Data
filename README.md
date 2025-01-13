@@ -47,31 +47,22 @@ In the pipeline, transformations were only applied to selected tables, with othe
 
 #### :star: Child Pipeline
 
-![Find Activites, Dataset code sources and parameters here](FromBronzetoSilverChilldPipeline)
+![Find Activites, Dataset code sources and parameters here](FromBronzetoSilverChilldPipeline).
 
 
 #### :star: Databricks Transformation and load to Silver container
 
-The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. ![Here is the Databricks notebook for the Bronze data transformation](Databricks/Bronze_transformation.ipynb)
+The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. ![Here is the Databricks notebook for the Bronze data transformation.](Databricks/Bronze_transformation.ipynb)
 
 
 ### :checkered_flag: Databricks Analytics and Transformation on files from silver container 
 I have created a few visualizations on Databricks on employee performance and order flow among countries. ![Here is the visualization](Databricks/Databricks_Visuals.pdf).
-You can see the whole notebook ![here](Databricks/Silver_analytics.py).
+You can see the whole notebook ![here](Databricks/Silver_analytics.py). 
+I have also created a denormalized table for easier data visualization in Power Bi.
+
+![PBVisual](PowerBI.png)
 
 
 
-
-
-
-### Data Load 
-Using Synapse, I created tables that were loaded into the gold container of Data Lake Gen2.
-[Load Data](Data%20Load)
-
-### Pipeline
-[ADF Pipeline](ADF)
-
-## Detialed guide and Analytics in synapse
-[Analytics](Analytics_synapse/SQL_for_analytics.txt)
 
 [Detailed Steps](Detailed%20Steps.pdf)
