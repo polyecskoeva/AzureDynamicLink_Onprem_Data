@@ -51,13 +51,17 @@ In the pipeline, transformations were only applied to selected tables, with othe
 
 #### :star: Databricks Transformation and load to Silver container
 
-The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. Here is the Databricks notebook for the Bronze data transformation: ![The File](Databricks/Silver_analytics.py)
+The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. ![Here is the Databricks notebook for the Bronze data transformation](Databricks/Bronze_transformation.ipynb)
+
+
+### :checkered_flag: Databricks Analytics and Transformation on files from silver container 
+I have created a few visualizations on Databricks on employee performance and order flow among countries. ![Here is the visualization](Databricks/Silver_analytics.py).
+You can see the whole notebook ![here](Databricks/Silver_analytics.py).
 
 
 
 
-
-
+Databricks/Databricks_Visuals.pdf
 
 
 
