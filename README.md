@@ -19,8 +19,7 @@ The Northwind dataset is a sample database originally created by Microsoft to sh
 [Here is the dataset](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs)
 
 ## Data model
-Here is the data model: [Data model](Data_Model.png)
-Data_Model.png
+Here is the data model: ![Data model](Data_Architect.jpeg)
 
 ## ETL
 ### Data Extract
