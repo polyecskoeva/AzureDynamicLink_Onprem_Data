@@ -10,15 +10,17 @@ Integrated Northwind commercial data from an on-premise SQL Server to Azure usin
    - Azure Data Factory
    - Databricks
    - Data Lake Gen2
+   - Azure SQL
    - Power Bi
      
 
 ## Dataset
-The dataset includes stock prices, dividend data, and fundamental company information fetched from Yahoo Finance. Total Shareholder Return (TSR) and volatility metrics were calculated to provide deeper insights into the performance of S&P 500 companies.
-[Here is the dataset.](https://github.com/polyecskoeva/AzureDataEngineer_FinancialData/tree/main/Data_Raw)
+The Northwind dataset is a sample database originally created by Microsoft to showcase the capabilities of relational databases and SQL. It contains data related to a fictional company, including customers, orders, products, suppliers, and other business-related information.
+[Here is the dataset](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs)
 
 ## Data model
-Here is the data model: [Data model](Data%20model.pdf)
+Here is the data model: [Data model](Data_Model.png)
+Data_Model.png
 
 ## ETL
 ### Data Extract
