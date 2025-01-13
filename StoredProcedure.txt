@@ -1,0 +1,71 @@
+CREATE PROCEDURE UpdatePipelineRunHistory
+@PipelineName NVARCHAR(100),
+@LastRunTime DATETIME
+AS
+BEGIN
+   -- Ellenőrzi, hogy létezik-e már az adott Pipeline
+   IF EXISTS (SELECT 1 FROM PipelineRunHistory WHERE PipelineName = @PipelineName)
+   BEGIN
+      -- Ha létezik, frissíti az időpontot
+      UPDATE PipelineRunHistory
+      SET LastRunTime = @LastRunTime
+      WHERE PipelineName = @PipelineName;
+   END
+   ELSE
+   BEGIN
+      -- Ha nem létezik, akkor beszúr egy új rekordot
+      INSERT INTO PipelineRunHistory (PipelineName, LastRunTime)
+      VALUES (@PipelineName, @LastRunTime);
+   END
+END;
+
+-------- Stored procedure Azure SQL Database to store the LastrunningDate ---
+CREATE TABLE PipelineRunHistory (
+    PipelineName NVARCHAR(100) PRIMARY KEY,
+    LastRunTime DATETIME
+);
+----- For the first run -----------
+INSERT INTO PipelineRunHistory (PipelineName, LastRunTime)
+VALUES ('Childpipelineonpremise', '1900-01-01 00:00:00'); 
+
+
+
+------ Activity in Pipeline ----
+
+{
+    "name": "UpdatePipelineRunHistory",
+    "type": "SqlServerStoredProcedure",
+    "dependsOn": [
+        {
+            "activity": "OnpremTableiteration",
+            "dependencyConditions": [
+                "Succeeded"
+            ]
+        }
+    ],
+    "policy": {
+        "timeout": "0.12:00:00",
+        "retry": 0,
+        "retryIntervalInSeconds": 30,
+        "secureOutput": false,
+        "secureInput": false
+    },
+    "userProperties": [],
+    "typeProperties": {
+        "storedProcedureName": "[dbo].[UpdatePipelineRunHistory]",
+        "storedProcedureParameters": {
+            "LastRunTime": {
+                "value": "@pipeline().TriggerTime",
+                "type": "Datetime"
+            },
+            "PipelineName": {
+                "value": "Childpipelineonpremise",
+                "type": "String"
+            }
+        }
+    },
+    "linkedServiceName": {
+        "referenceName": "LSAureDBRuntime",
+        "type": "LinkedServiceReference"
+    }
+}

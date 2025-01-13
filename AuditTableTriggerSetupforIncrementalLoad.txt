@@ -1,0 +1,48 @@
+CREATE TABLE dbo.AuditTable (
+    TableName NVARCHAR(255),
+    LastModifiedDate DATETIME
+);
+
+
+DECLARE @TableName NVARCHAR(255);
+DECLARE @SQL NVARCHAR(MAX);
+
+DECLARE TableCursor CURSOR FOR
+SELECT TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE';
+
+OPEN TableCursor;
+FETCH NEXT FROM TableCursor INTO @TableName;
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    SET @SQL = '
+    CREATE TRIGGER trg_UpdateAuditTable_' + @TableName + '
+    ON dbo.' + @TableName + '
+    AFTER INSERT, UPDATE, DELETE
+    AS
+    BEGIN
+
+        UPDATE dbo.AuditTable
+        SET LastModifiedDate = GETDATE()
+        WHERE TableName = ''' + @TableName + ''';
+
+
+        IF NOT EXISTS (SELECT 1 FROM dbo.AuditTable WHERE TableName = ''' + @TableName + ''')
+        BEGIN
+            INSERT INTO dbo.AuditTable (TableName, LastModifiedDate)
+            VALUES (''' + @TableName + ''', GETDATE());
+        END
+    END
+    ';
+    
+    EXEC sp_executesql @SQL;
+
+    FETCH NEXT FROM TableCursor INTO @TableName;
+END;
+
+CLOSE TableCursor;
+DEALLOCATE TableCursor;
+
+

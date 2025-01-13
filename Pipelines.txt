@@ -1,0 +1,478 @@
+------Parent Pipeline-------------------------------
+
+{
+    "name": "parentPipelineonpremise",
+    "properties": {
+        "activities": [
+            {
+                "name": "lookLastRunTimePipeline",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "SELECT LastRunTime\nFROM PipelineRunHistory\nWHERE PipelineName = 'Childpipelineonpremise';",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "AzureSqlTable1",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "CheckOnpremiseLastUpdatedtime",
+                "description": "go to my AuditTable and check the maxdate",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlServerSource",
+                        "sqlReaderQuery": "SELECT MAX(LastModifiedDate) AS MaxLastModified\nFROM AuditTable\n",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "DatasetforAudittableLastModifiedDate",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "IsLastModifiedgreaterthanLastRunTime",
+                "description": "To see if we need to run the pipeline. Compares the two lookups prior\n",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "lookLastRunTimePipeline",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    },
+                    {
+                        "activity": "CheckOnpremiseLastUpdatedtime",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@greater(addHours(activity('CheckOnpremiseLastUpdatedtime').output.value[0].MaxLastModified, -1), activity('lookLastRunTimePipeline').output.value[0].LastRunTime)\n\n",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "NewDataquestionmark",
+                            "type": "SetVariable",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "variableName": "NewData",
+                                "value": "No New Data has been found, the pipeline stops executing."
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "Execute Pipeline1",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "Childpipelineonpremise",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "variables": {
+            "NewData": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2025-01-09T13:13:50Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
+
+
+------Child Pipeline-------------------------------
+
+{
+    "name": "Childpipelineonpremise",
+    "properties": {
+        "description": "for the actual data fetch from on premise sql server",
+        "activities": [
+            {
+                "name": "onpremiselookup",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "SqlServerSource",
+                        "sqlReaderQuery": "SELECT TABLE_NAME \nFROM INFORMATION_SCHEMA.TABLES \nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME not in( 'Products', 'AuditTable','Categories','CustomerCustomerDemo','CustomerDemographics')\n;\n",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "DatasetonpremSQL",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "OnpremTableiteration",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "onpremiselookup",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('onpremiselookup').output.value\n",
+                        "type": "Expression"
+                    },
+                    "isSequential": false,
+                    "batchCount": 1,
+                    "activities": [
+                        {
+                            "name": "copyonpremsql",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "SqlServerSource",
+                                    "queryTimeout": "02:00:00",
+                                    "partitionOption": "None"
+                                },
+                                "sink": {
+                                    "type": "ParquetSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "ParquetWriteSettings"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "copyonpremDS",
+                                    "type": "DatasetReference"
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "todatalake",
+                                    "type": "DatasetReference"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "UpdatePipelineRunHistory",
+                "type": "SqlServerStoredProcedure",
+                "dependsOn": [
+                    {
+                        "activity": "OnpremTableiteration",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "storedProcedureName": "[dbo].[UpdatePipelineRunHistory]",
+                    "storedProcedureParameters": {
+                        "LastRunTime": {
+                            "value": {
+                                "value": "@pipeline().TriggerTime",
+                                "type": "Expression"
+                            },
+                            "type": "Datetime"
+                        },
+                        "PipelineName": {
+                            "value": "Childpipelineonpremise",
+                            "type": "String"
+                        }
+                    }
+                },
+                "linkedServiceName": {
+                    "referenceName": "LSAureDBRuntime",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "LooptoSilver",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "LookParameterstoSilver",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('LookParameterstoSilver').output.value",
+                        "type": "Expression"
+                    },
+                    "activities": [
+                        {
+                            "name": "DS7filesfromBronze",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "ParquetSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "ParquetReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "ParquetSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "ParquetWriteSettings"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DSFrombronze",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "br_directory": {
+                                            "value": "@item().br_directory",
+                                            "type": "Expression"
+                                        },
+                                        "br_file_name": {
+                                            "value": "@item().br_file_name",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DSToSilver",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "slvr_Directory": {
+                                            "value": "@item().slvr_Directory",
+                                            "type": "Expression"
+                                        },
+                                        "slvr_FileName": {
+                                            "value": "@item().slvr_FileName",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "LookParameterstoSilver",
+                "type": "Lookup",
+                "dependsOn": [
+                    {
+                        "activity": "UpdatePipelineRunHistory",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "JsonSource",
+                        "storeSettings": {
+                            "type": "AzureBlobFSReadSettings",
+                            "recursive": true,
+                            "enablePartitionDiscovery": false
+                        },
+                        "formatSettings": {
+                            "type": "JsonReadSettings"
+                        }
+                    },
+                    "dataset": {
+                        "referenceName": "Json1",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "BronzeTransDbricks",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "LooptoSilver",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/polyecskoeva@gmail.com/Transformation_to_Silver/bronze_tansformation_load"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LSDbricks",
+                    "type": "LinkedServiceReference"
+                }
+            },
+            {
+                "name": "BronzeTransDbricks_copy1",
+                "type": "DatabricksNotebook",
+                "dependsOn": [
+                    {
+                        "activity": "BronzeTransDbricks",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/polyecskoeva@gmail.com/Transformation&Analytics_to_Gold/Silver_analytics"
+                },
+                "linkedServiceName": {
+                    "referenceName": "LSDbricks",
+                    "type": "LinkedServiceReference"
+                }
+            }
+        ],
+        "variables": {
+            "NewData": {
+                "type": "String"
+            }
+        },
+        "annotations": [],
+        "lastPublishTime": "2025-01-10T09:24:07Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
