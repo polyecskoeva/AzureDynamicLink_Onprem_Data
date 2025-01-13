@@ -21,6 +21,10 @@ The Northwind dataset is a sample database originally created by Microsoft to sh
 ## Data model
 Here is the data model: ![Data model](Data_Model.png)
 
+### Data model denormalization 
+I created a Product_denorm table to showcase the normalization process, by slightly denormalizing the product data. This allowed me to demonstrate how the data transformation process works, emphasizing the benefits of normalization.
+![Here is the SQL](Product_denormalization.txt)
+
 
 ## ETL
 ### Data Extract
