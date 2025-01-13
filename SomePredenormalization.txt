@@ -1,0 +1,6 @@
+SELECT p.*, s.CompanyName AS Supplier_company_name,
+       c.CategoryID, c.CategoryName, c.Description
+INTO [dbo].[Products_denorm]
+FROM [dbo].[Products] p
+LEFT JOIN [dbo].[Categories] c ON c.CategoryID = p.CategoryID
+LEFT JOIN [dbo].[Suppliers] s ON s.SupplierID = p.SupplierID;
