@@ -1,5 +1,5 @@
 # Introduction
-Integrated Northwind commercial data from an on-premise SQL Server to Azure using a self-hosted integration runtime. Implemented dynamic datasets and pipelines in Azure Data Factory, analyzed the data in Databricks, and visualized it in Power BI for insights.
+Integrated Northwind commercial data from an on-premise SQL Server to Azure using a self-hosted integration runtime. Implemented dynamic datasets, incremental data load, and pipelines in Azure Data Factory, analyzed the data in Databricks, and visualized it in Power BI for insights.
 
 ## Architecture
 ![Project Architecture](Data_Architect.jpeg)
@@ -19,11 +19,18 @@ The Northwind dataset is a sample database originally created by Microsoft to sh
 [Here is the dataset](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs)
 
 ## Data model
-Here is the data model: ![Data model](Data_Architect.jpeg)
+Here is the data model: ![Data model](Data_Model.png)
+
 
 ## ETL
 ### Data Extract
-Here is the Python script fetching the data using yfinance package in Databricks: [Extract data](Data%20Extract/FETCHING%20YFINANCE%20DATA.py)
+The Data Extract process involves extracting data from an SQL Server database using SQL Authentication. The data is accessed through a Self-Hosted Integration Runtime (IR), which enables the connection to on-premises data sources, such as an on-prem SQL Server. The dynamic pipeline ensures flexible and dynamic data processing.
+The pipeline contains a Lookup Activity that executes the provided query to get the table names from the on prem SQL Server.
+The next activity is a For Each, which iterates over the output values from the Lookup query.
+Inside the For Each, there is a Copy Activity that dynamically writes data to the Gen2 storage with a dynamic file path.
+![Find the Activity, Dataset code sources here](IncrementalDataLoad)
+
+
 
 ### Data Transformation
 Here is the Python script transforming the data using Databricks: [Transform data](Data%20Transformation/Bronze%20data%20transformation.py)
