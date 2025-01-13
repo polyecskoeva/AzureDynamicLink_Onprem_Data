@@ -3,17 +3,17 @@ CREATE PROCEDURE UpdatePipelineRunHistory
 @LastRunTime DATETIME
 AS
 BEGIN
-   -- Ellenőrzi, hogy létezik-e már az adott Pipeline
+
    IF EXISTS (SELECT 1 FROM PipelineRunHistory WHERE PipelineName = @PipelineName)
    BEGIN
-      -- Ha létezik, frissíti az időpontot
+
       UPDATE PipelineRunHistory
       SET LastRunTime = @LastRunTime
       WHERE PipelineName = @PipelineName;
    END
    ELSE
    BEGIN
-      -- Ha nem létezik, akkor beszúr egy új rekordot
+
       INSERT INTO PipelineRunHistory (PipelineName, LastRunTime)
       VALUES (@PipelineName, @LastRunTime);
    END
