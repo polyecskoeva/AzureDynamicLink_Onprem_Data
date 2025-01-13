@@ -1,5 +1,5 @@
 # Introduction
-Integrated Northwind commercial data from an on-premise SQL Server to Azure using a Self-Hosted integration runtime. Implemented dynamic datasets, incremental data load, and pipelines in Azure Data Factory, analyzed the data in Databricks, and visualized it in Power BI for insights.
+I thoroughly enjoyed building this pipeline, seamlessly integrating Northwind commercial data from an on-premise SQL Server to Azure using a Self-Hosted integration runtime. I leveraged dynamic datasets, incremental data load, and pipelines in Azure Data Factory, analyzed the data with Databricks, and brought the insights to life through Power BI visualizations.
 
 ## Architecture
 ![Project Architecture](Data_Architect.jpeg)
