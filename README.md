@@ -27,6 +27,7 @@ I created a Product_denorm table to showcase the normalization process, by sligh
 
 
 ## Pipeline
+![Here is the source code for the whole pipeline.](Pipelines.txt)
 
 ### :checkered_flag: From OnPrem to Data Lake Bronze container
 #### :star: Parent Pipeline
@@ -55,20 +56,13 @@ The ones that needed transformation were processed in a Databricks notebook, and
 
 
 ### :checkered_flag: Databricks Analytics and Transformation on files from silver container 
-I have created a few visualizations on Databricks on employee performance and order flow among countries. ![Here is the visualization](Databricks/Silver_analytics.py).
+I have created a few visualizations on Databricks on employee performance and order flow among countries. ![Here is the visualization](Databricks/Databricks_Visuals.pdf).
 You can see the whole notebook ![here](Databricks/Silver_analytics.py).
 
 
 
 
-Databricks/Databricks_Visuals.pdf
 
-
-
-
-
-### Data Transformation
-Here is the Python script transforming the data using Databricks: [Transform data](Data%20Transformation/Bronze%20data%20transformation.py)
 
 ### Data Load 
 Using Synapse, I created tables that were loaded into the gold container of Data Lake Gen2.
