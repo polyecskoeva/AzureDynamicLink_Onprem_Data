@@ -23,15 +23,15 @@ Here is the data model: ![Data model](Data_Model.png)
 
 ### Data model denormalization 
 I created a Product_denorm table to showcase the normalization process, by slightly denormalizing the product data. This allowed me to demonstrate how the data transformation process works, emphasizing the benefits of normalization.
-![Here is the SQL](Product_denormalization.txt)
+[Here is the SQL](Product_denormalization.txt)
 
 
 ## Pipeline
-![Here is the source code for the whole pipeline.](Pipelines.txt)
+[Here is the source code for the whole pipeline.](Pipelines.txt)
 
 ### :checkered_flag: From OnPrem to Data Lake Bronze container
 #### :star: Parent Pipeline
-The pipeline consists of a parent and a child pipeline, where the parent pipeline handles the incremental data load. It uses two Lookup activities: the first looks at the Azure SQL server, which stores the last runtime of the pipeline, and it automatically refreshes through a Stored Procedure activity. ![Here is the SQL and Activity code for the Stored Procedure](StoredProcedure.txt). The second Lookup activity queries the audit table in the on-prem SQL database to track the last time any of the tables were updated. ![Here is the SQL for the Audit table.](AuditTableTriggerSetupforIncrementalLoad.txt). An If Condition activity compares the two dates, and if there’s a change in the on-prem tables, the pipeline proceeds by running the child pipeline using the Execute Pipeline activity.
+The pipeline consists of a parent and a child pipeline, where the parent pipeline handles the incremental data load. It uses two Lookup activities: the first looks at the Azure SQL server, which stores the last runtime of the pipeline, and it automatically refreshes through a Stored Procedure activity. [Here is the SQL and Activity code for the Stored Procedure](StoredProcedure.txt). The second Lookup activity queries the audit table in the on-prem SQL database to track the last time any of the tables were updated. [Here is the SQL for the Audit table.](AuditTableTriggerSetupforIncrementalLoad.txt). An If Condition activity compares the two dates, and if there’s a change in the on-prem tables, the pipeline proceeds by running the child pipeline using the Execute Pipeline activity.
 
 #### :star: Child Pipeline
 
@@ -39,7 +39,7 @@ The pipeline contains a Lookup Activity that executes the provided query to get 
 The next activity is a For Each, which iterates over the output values from the Lookup query.
 Inside the For Each, there is a Copy Activity that dynamically writes data to the Gen2 storage with a dynamic file path.
 
-![Find Activites, Dataset code sources here](IncrementalDataLoad)
+[Find Activites, Dataset code sources here](IncrementalDataLoad)
 
 
 ### :checkered_flag: From Bronze container to Data Lake Bronze container to Silver
@@ -47,12 +47,12 @@ In the pipeline, transformations were only applied to selected tables, with othe
 
 #### :star: Child Pipeline
 
-![Find Activites, Dataset code sources and parameters here](FromBronzetoSilverChilldPipeline).
+[Find Activites, Dataset code sources and parameters here](FromBronzetoSilverChilldPipeline).
 
 
 #### :star: Databricks Transformation and load to Silver container
 
-The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. ![Here is the Databricks notebook for the Bronze data transformation.](Databricks/Bronze_transformation.ipynb)
+The ones that needed transformation were processed in a Databricks notebook, and the corresponding Notebook activity was added to the child pipeline. [Here is the Databricks notebook for the Bronze data transformation.](Databricks/Bronze_transformation.ipynb)
 
 
 ### :checkered_flag: Databricks Analytics and Transformation on files from silver container 
