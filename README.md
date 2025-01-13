@@ -1,5 +1,5 @@
 # Introduction
-Integrated Northwind commercial data from an on-premise SQL Server to Azure using a self-hosted integration runtime. Implemented dynamic datasets, incremental data load, and pipelines in Azure Data Factory, analyzed the data in Databricks, and visualized it in Power BI for insights.
+Integrated Northwind commercial data from an on-premise SQL Server to Azure using a Self-Hosted integration runtime. Implemented dynamic datasets, incremental data load, and pipelines in Azure Data Factory, analyzed the data in Databricks, and visualized it in Power BI for insights.
 
 ## Architecture
 ![Project Architecture](Data_Architect.jpeg)
@@ -26,9 +26,18 @@ I created a Product_denorm table to showcase the normalization process, by sligh
 ![Here is the SQL](Product_denormalization.txt)
 
 
-## ETL
-### Data Extract
-The Data Extract process involves extracting data from an SQL Server database using SQL Authentication. The data is accessed through a Self-Hosted Integration Runtime (IR), which enables the connection to on-premises data sources, such as an on-prem SQL Server. The dynamic pipeline ensures flexible and dynamic data processing.
+## Pipeline
+
+### From OnPrem to Data Lake Bronze
+### Parent Pipeline
+The pipeline consists of a parent and a child pipeline, where the parent pipeline handles the incremental data load. It uses two Lookup activities: the first looks at the Azure SQL server, which stores the last runtime of the pipeline, and it automatically refreshes through a Stored Procedure activity. ![Here is the SQL and Activity code for the Stored ProcedureL](StoredProcedure.txt). The second Lookup activity queries the audit table in the on-prem SQL database to track the last time any of the tables were updated. ![Here is the SQL for the Audit table.](AuditTableTriggerSetupforIncrementalLoad.txt). An If Condition activity compares the two dates, and if there’s a change in the on-prem tables, the pipeline proceeds by running the child pipeline using the Execute Pipeline activity.
+
+
+
+
+
+
+
 The pipeline contains a Lookup Activity that executes the provided query to get the table names from the on prem SQL Server.
 The next activity is a For Each, which iterates over the output values from the Lookup query.
 Inside the For Each, there is a Copy Activity that dynamically writes data to the Gen2 storage with a dynamic file path.
