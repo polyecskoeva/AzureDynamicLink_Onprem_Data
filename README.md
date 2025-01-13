@@ -56,15 +56,15 @@ The ones that needed transformation were processed in a Databricks notebook, and
 
 
 ### :checkered_flag: Databricks Analytics and Transformation on files from silver container 
-I have created a few visualizations on Databricks on employee performance and order flow among countries. ![Here is the visualization](Databricks/Databricks_Visuals.pdf).
-You can see the whole databricks notebook ![here](Databricks/Silver_analytics.py). 
+I have created a few visualizations on Databricks on employee performance and order flow among countries. [Here is the visualization](Databricks/Databricks_Visuals.pdf).
+You can see the whole databricks notebook [here](Databricks/Silver_analytics.py). 
 
 
 ### :checkered_flag: Power Bi Visualization
 I have created a denormalized table to simplify data visualization in Power BI, allowing for deeper insights into the sales analytics of Northwind.
 
 ![PBVisual](PowerBI.png)
-![See the pbix file here.](Northwind_analysis.pbix )
+[See the pbix file here.](Northwind_analysis.pbix )
 
 ## Guide
 Here is a step-by-step guide with detailed instructions and images for each step.
