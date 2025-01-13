@@ -1,0 +1,60 @@
+{
+    "name": "IsLastModifiedgreaterthanLastRunTime",
+    "description": "To see if we need to run the pipeline. Compares the two lookups prior\n",
+    "type": "IfCondition",
+    "dependsOn": [
+        {
+            "activity": "lookLastRunTimePipeline",
+            "dependencyConditions": [
+                "Succeeded"
+            ]
+        },
+        {
+            "activity": "CheckOnpremiseLastUpdatedtime",
+            "dependencyConditions": [
+                "Succeeded"
+            ]
+        }
+    ],
+    "userProperties": [],
+    "typeProperties": {
+        "expression": {
+            "value": "@greater(addHours(activity('CheckOnpremiseLastUpdatedtime').output.value[0].MaxLastModified, -1), activity('lookLastRunTimePipeline').output.value[0].LastRunTime)\n\n",
+            "type": "Expression"
+        },
+        "ifFalseActivities": [
+            {
+                "name": "NewDataquestionmark",
+                "type": "SetVariable",
+                "dependsOn": [],
+                "policy": {
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "variableName": "NewData",
+                    "value": "No New Data has been found, the pipeline stops executing."
+                }
+            }
+        ],
+        "ifTrueActivities": [
+            {
+                "name": "Execute Pipeline1",
+                "type": "ExecutePipeline",
+                "dependsOn": [],
+                "policy": {
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "pipeline": {
+                        "referenceName": "Childpipelineonpremise",
+                        "type": "PipelineReference"
+                    },
+                    "waitOnCompletion": true
+                }
+            }
+        ]
+    }
+}

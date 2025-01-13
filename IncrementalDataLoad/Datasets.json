@@ -1,0 +1,125 @@
+--- Dataset for lookup activity from SQL Server
+
+
+
+{
+    "name": "DatasetonpremSQL",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LSonpremisecopy",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "SqlServerTable",
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
+
+
+
+--- Dataset copying from prem SQL server
+
+{
+    "name": "copyonpremDS",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LSonpremisecopy",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "SqlServerTable",
+        "schema": [],
+        "typeProperties": {
+            "schema": "dbo",
+            "table": {
+                "value": "@item().TABLE_NAME",
+                "type": "Expression"
+            }
+        }
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+}
+
+
+
+
+--- Dataset copying to datalake bronze container
+
+{
+    "name": "todatalake",
+    "properties": {
+        "linkedServiceName": {
+            "referenceName": "LStodataLake",
+            "type": "LinkedServiceReference"
+        },
+        "annotations": [],
+        "type": "Parquet",
+        "typeProperties": {
+            "location": {
+                "type": "AzureBlobFSLocation",
+                "fileName": {
+                    "value": "@concat(item().TABLE_NAME, '.parquet')\n",
+                    "type": "Expression"
+                },
+                "folderPath": {
+                    "value": "@concat('bronze/', item().TABLE_NAME)\n\n",
+                    "type": "Expression"
+                }
+            },
+            "compressionCodec": "snappy"
+        },
+        "schema": []
+    },
+    "type": "Microsoft.DataFactory/factories/datasets"
+
+
+    --- Copying LastrunTime from Azure SQL Database
+
+
+    {
+        "name": "AzureSqlTable1",
+        "properties": {
+            "linkedServiceName": {
+                "referenceName": "LSAureDBRuntime",
+                "type": "LinkedServiceReference"
+            },
+            "annotations": [],
+            "type": "AzureSqlTable",
+            "schema": [
+                {
+                    "name": "PipelineName",
+                    "type": "nvarchar"
+                },
+                {
+                    "name": "LastRunTime",
+                    "type": "datetime",
+                    "precision": 23,
+                    "scale": 3
+                }
+            ],
+            "typeProperties": {
+                "schema": "dbo",
+                "table": "PipelineRunHistory"
+            }
+        }
+
+
+
+
+ --- Copying LastModifiedDate from on prem SQL Server
+        {
+            "name": "DatasetforAudittableLastModifiedDate",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "LSonpremisecopy",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "SqlServerTable",
+                "schema": []
+            }
+        }
+
+
+

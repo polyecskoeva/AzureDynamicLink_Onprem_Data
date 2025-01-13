@@ -1,0 +1,7 @@
+{
+    "name": "SHIRSecondproj",
+    "properties": {
+        "type": "SelfHosted",
+        "description": "To access local SQL server"
+    }
+}

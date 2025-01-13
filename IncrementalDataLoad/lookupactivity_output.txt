@@ -1,0 +1,56 @@
+{
+	"count": 13,
+	"value": [
+		{
+			"TABLE_NAME": "Employees"
+		},
+		{
+			"TABLE_NAME": "Customers"
+		},
+		{
+			"TABLE_NAME": "Shippers"
+		},
+		{
+			"TABLE_NAME": "Suppliers"
+		},
+		{
+			"TABLE_NAME": "Orders"
+		},
+		{
+			"TABLE_NAME": "Products"
+		},
+		{
+			"TABLE_NAME": "Order_Details"
+                },
+		{
+			"TABLE_NAME": "Region"
+		},
+		{
+			"TABLE_NAME": "Territories"
+		},
+		{
+			"TABLE_NAME": "EmployeeTerritories"
+		}
+	],
+	"effectiveIntegrationRuntime": "SHIRSecondproj",
+	"billingReference": {
+		"activityType": "PipelineActivity",
+		"billableDuration": [
+			{
+				"meterType": "SelfhostedIR",
+				"duration": 0.016666666666666666,
+				"unit": "Hours"
+			}
+		],
+		"totalBillableDuration": [
+			{
+				"meterType": "AzureIR",
+				"duration": 0.06666666666666667,
+				"unit": "Hours"
+			}
+		]
+	},
+	"durationInQueue": {
+		"integrationRuntimeQueue": 2
+	}
+}

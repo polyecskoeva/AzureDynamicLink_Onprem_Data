@@ -1,0 +1,94 @@
+---------- Child Lookup activity------------
+---------- Look at the Tables in SQL Server ----------
+{
+    "name": "onpremiselookup",
+    "type": "Lookup",
+    "dependsOn": [],
+    "policy": {
+        "timeout": "0.12:00:00",
+        "retry": 0,
+        "retryIntervalInSeconds": 30,
+        "secureOutput": false,
+        "secureInput": false
+    },
+    "userProperties": [],
+    "typeProperties": {
+        "source": {
+            "type": "SqlServerSource",
+            "sqlReaderQuery": "SELECT TABLE_NAME \nFROM INFORMATION_SCHEMA.TABLES \nWHERE TABLE_TYPE = 'BASE TABLE'\nAND TABLE_NAME not in( 'Products', 'AuditTable','Categories','CustomerCustomerDemo','CustomerDemographics')\n;\n",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+        },
+        "dataset": {
+            "referenceName": "DatasetonpremSQL",
+            "type": "DatasetReference"
+        },
+        "firstRowOnly": false
+    }
+}
+
+---------- Parent Lookup activity------------
+---------- From  SQL Server, check the LastModifiedDate Lookup activity------------
+
+{
+    "name": "CheckOnpremiseLastUpdatedtime",
+    "description": "go to my AuditTable and check the maxdate",
+    "type": "Lookup",
+    "dependsOn": [],
+    "policy": {
+        "timeout": "0.12:00:00",
+        "retry": 0,
+        "retryIntervalInSeconds": 30,
+        "secureOutput": false,
+        "secureInput": false
+    },
+    "userProperties": [],
+    "typeProperties": {
+        "source": {
+            "type": "SqlServerSource",
+            "sqlReaderQuery": "SELECT MAX(LastModifiedDate) AS MaxLastModified\nFROM AuditTable\n",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+        },
+        "dataset": {
+            "referenceName": "DatasetforAudittableLastModifiedDate",
+            "type": "DatasetReference"
+        },
+        "firstRowOnly": false
+    }
+}
+
+
+
+
+---------- Parent Lookup activity------------
+---------- From Azure SQL, check the last runtime Lookup activity------------
+
+
+{
+    "name": "lookLastRunTimePipeline",
+    "type": "Lookup",
+    "dependsOn": [],
+    "policy": {
+        "timeout": "0.12:00:00",
+        "retry": 0,
+        "retryIntervalInSeconds": 30,
+        "secureOutput": false,
+        "secureInput": false
+    },
+    "userProperties": [],
+    "typeProperties": {
+        "source": {
+            "type": "AzureSqlSource",
+            "sqlReaderQuery": "SELECT LastRunTime\nFROM PipelineRunHistory\nWHERE PipelineName = 'Childpipelineonpremise';",
+            "queryTimeout": "02:00:00",
+            "partitionOption": "None"
+        },
+        "dataset": {
+            "referenceName": "AzureSqlTable1",
+            "type": "DatasetReference"
+        },
+        "firstRowOnly": false
+    }
+}
+
